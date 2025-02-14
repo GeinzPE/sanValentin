@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="es">
+
+
+
+<body>
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet">
+        <title>Listar Imágenes de Firebase Storage y Tiendas</title>
+    </head>
+    <section class="contenedorPadre">
+        <section class="cartaSobresalida">
+            <div class="centradocorazon">
+                <span class="corazon">❤️</span>
+
+            </div>
+        </section>
+
+        <div class="sky" id="sky"></div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const sky = document.getElementById("sky");
+                const numStars = 200; // Cantidad de estrellas
+
+                for (let i = 0; i < numStars; i++) {
+                    let star = document.createElement("div");
+                    star.classList.add("star");
+
+                    // Posición aleatoria en la pantalla
+                    let x = Math.random() * window.innerWidth;
+                    let y = Math.random() * window.innerHeight;
+
+                    star.style.left = `${x}px`;
+                    star.style.top = `${y}px`;
+
+                    // Tamaño aleatorio para estrellas más variadas
+                    let size = Math.random() * 3 + 1; // Entre 1px y 4px
+                    star.style.width = `${size}px`;
+                    star.style.height = `${size}px`;
+
+                    // Velocidad de parpadeo aleatoria
+                    let duration = Math.random() * 1 + 1; // Entre 1s y 4s
+                    star.style.animationDuration = `${duration}s`;
+
+                    sky.appendChild(star);
+                }
+            });
+        </script>
+        <p class="tituloPrincipal">Agrega un bonito detalle para tu pareja ❤️</p>
+        <div class="centradoTextoLlamativo">
+            <p class="textoLlamativo">Crea un regalo virtual inolvidable para tu pareja. Personaliza una hermosa galería
+                de imágenes con frases
+                llenas de amor y emoción. Expresa tus sentimientos de una manera original y especial, y haz que este San
+                Valentín sea aún más mágico. </p>
+        </div>
+
+        <div class="celular">
+            <div class="componentee"></div>
+        </div>
+
+        <p class="fraces_principales" id="frases"></p>
+        <div class="lista_frases" id="contenedorFrases"></div>
+
+        <div class="centrado_img">
+            <div class="imgCentrado"></div>
+            <div class="carousel-indicators" id="carouselIndicators"></div>
+        </div>
+        <p class="texto_ca" id="textoCambiante"></p>
+        <p class="tituloSegundario">Cuenta tu historia en fotos 📸❤️</p>
+        <div class="centradoTextoSegundario">
+            <p class="textoSegundaria">Cada imagen guarda un recuerdo, una emoción, un momento especial. Crea una
+                galería
+                única y personaliza cada foto con frases que expresen lo que sientes. Comparte tu historia de amor de
+                una
+                manera especial y sorprende a tu persona favorita con un detalle inolvidable.</p>
+        </div>
+        <section class="galeriIMG"></section>
+
+
+        <section class="galeriIMG2"></section>
+
+        <ul id="listaTiendas"></ul>
+
+    </section>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-app.js";
+        import { getStorage, ref, listAll, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-storage.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.7.2/firebase-firestore.js";
+
+        // 🔹 Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBfq4BdPKhCu3ag0DVKt7KhxlEwcjxfIPY",
+            authDomain: "geinzwork.firebaseapp.com",
+            databaseURL: "https://geinzwork-default-rtdb.firebaseio.com",
+            projectId: "geinzwork",
+            storageBucket: "geinzwork.appspot.com",
+            messagingSenderId: "1045448347645",
+            appId: "1:1045448347645:web:7d19ca9d2c2ec673545394",
+            measurementId: "G-8P23K8MMNC"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        let imagenesArray = [];
+        let frasesArray = [];
+        let indiceImagen = 0;
+        let idUser = "5TU3kxvIjEJ9JhRbhrUr";
+        let referenciaStorage = `sanValentin/${idUser}`;
+        let referenciaFirestore = `sanValentin/${idUser}/img_fraces`;
+
+        // 🟢 Función para obtener la frase de Firestore según el nombre de la imagen
+        async function obtenerFrase(imgName) {
+            const q = query(collection(db, referenciaFirestore), where("caption_img", "==", imgName));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const docData = querySnapshot.docs[0].data();
+                return docData.frace || "Sin texto";
+            } else {
+                return "Sin texto";
+            }
+        }
+
+        // 🟢 Función para obtener imágenes y sus frases
+        async function obtenerImagenesYFrases() {
+            const imgCentrado = document.querySelector(".imgCentrado");
+            const indicatorsContainer = document.getElementById("carouselIndicators");
+            const textoCambiante = document.getElementById("textoCambiante");
+
+            imagenesArray = [];
+            frasesArray = [];
+            indicatorsContainer.innerHTML = "";
+
+            const folderRef = ref(storage, referenciaStorage);
+            try {
+                const res = await listAll(folderRef);
+                if (res.items.length === 0) return;
+
+                for (const itemRef of res.items) {
+                    const url = await getDownloadURL(itemRef);
+                    const imgName = itemRef.name.replace(/\.[^/.]+$/, ""); // 🔹 Obtener el nombre sin extensión
+
+                    imagenesArray.push({ url, imgName });
+
+                    // 🔹 Obtener la frase desde Firestore
+                    const frase = await obtenerFrase(imgName);
+                    frasesArray.push({ imgName, frase });
+                }
+
+                if (imagenesArray.length > 0) {
+                    imgCentrado.style.backgroundImage = `url('${imagenesArray[0].url}')`;
+                    textoCambiante.textContent = frasesArray.find(f => f.imgName === imagenesArray[0].imgName)?.frase || "Sin texto";
+                    agregarIndicadores(imagenesArray.length);
+                    iniciarCarrusel();
+                }
+            } catch (error) {
+                console.error("Error al obtener imágenes y frases:", error);
+            }
+        }
+
+        function agregarIndicadores(cantidad) {
+            const indicatorsContainer = document.getElementById("carouselIndicators");
+            indicatorsContainer.innerHTML = "";
+            for (let i = 0; i < cantidad; i++) {
+                let indicador = document.createElement("div");
+                indicador.classList.add("indicator");
+                if (i === 0) indicador.classList.add("active");
+                indicatorsContainer.appendChild(indicador);
+            }
+        }
+
+        function actualizarIndicadores() {
+            const indicadores = document.querySelectorAll(".indicator");
+            indicadores.forEach((indicador, index) => {
+                indicador.classList.toggle("active", index === indiceImagen);
+            });
+        }
+
+        function iniciarCarrusel() {
+            const imgCentrado = document.querySelector(".imgCentrado");
+            const textoCambiante = document.getElementById("textoCambiante");
+
+            setInterval(() => {
+                indiceImagen = (indiceImagen + 1) % imagenesArray.length;
+                imgCentrado.style.opacity = "0";
+                textoCambiante.classList.add("fade-out"); // Aplicar efecto de desvanecimiento
+
+                setTimeout(() => {
+                    imgCentrado.style.backgroundImage = `url('${imagenesArray[indiceImagen].url}')`;
+                    textoCambiante.textContent = frasesArray.find(f => f.imgName === imagenesArray[indiceImagen].imgName)?.frase || "Sin texto";
+
+                    imgCentrado.style.opacity = "1";
+                    textoCambiante.classList.remove("fade-out"); // Volver a mostrar el texto con suavidad
+                    actualizarIndicadores();
+                }, 500);
+            }, 5000);
+        }
+
+
+
+        async function obtenerDatos() {
+            const lista = document.getElementById("listaTiendas");
+            lista.innerHTML = ""; // Limpiar antes de agregar nuevas cartas
+
+            try {
+                const querySnapshot = await getDocs(collection(db, "sanValentin"));
+
+                if (querySnapshot.empty) {
+                    lista.innerHTML = "<li>No hay mensajes registrados</li>";
+                } else {
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+
+                        // Crear la carta
+                        let carta = document.createElement("div");
+                        carta.classList.add("carta");
+
+                        // Contenido de la carta
+                        carta.innerHTML = `
+                    <h1>💖 Mensaje Especial 💖</h1>
+                    <p>👤 <strong>De:</strong> ${data.nombre || "Sin nombre"} ${data.apellido || ""}</p>
+                    <p>📧 <strong>Para:</strong> ${data.para || "Sin correo"}</p>
+                    <p>💬 <strong>Mensaje:</strong> ${data.primera_frase || "Sin frase"}</p>
+                    <p class="firma">💕 Con cariño, ${data.nombre || "Alguien especial"} 💕</p>
+                   
+                `;
+
+                        // Agregar la carta a la lista
+                        lista.appendChild(carta);
+                    });
+                }
+            } catch (error) {
+                console.error("Error al obtener los datos:", error);
+            }
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            obtenerImagenesYFrases();
+            obtenerDatos();
+            const frases = [
+                "El amor no se trata de cuánto dices 'te amo', sino de cuánto lo demuestras.",
+                "Eres mi hoy y todos mis mañanas.",
+                "El amor verdadero no tiene final feliz, porque simplemente no tiene final.",
+                "Cada momento a tu lado es un pedacito de felicidad eterna.",
+                "Eres el mejor regalo que la vida me ha dado."
+            ];
+
+            const fracesTitulo = [
+                "Un Recuerdo para Siempre: Comparte tu Amor en un QR",
+                "Demuéstrale tu Amor con un Detalle Único",
+                "Un QR, Mil Recuerdos: Sella tu Amor en San Valentín",
+                "Guarda tu Amor en un Código QR y Sorpréndela",
+                "Un Regalo Diferente: Captura tu Amor en un QR"
+            ];
+
+            const contenedor = document.getElementById("contenedorFrases");
+            const contenedorTitulo = document.getElementById("");
+
+            // Crear elementos de frases
+            frases.forEach((texto, index) => {
+                let fraseElemento = document.createElement("p");
+                fraseElemento.classList.add("frase");
+                fraseElemento.textContent = texto;
+                if (index === 0) fraseElemento.classList.add("active"); // Primera frase visible
+                contenedor.appendChild(fraseElemento);
+            });
+
+            const frasesElementos = document.querySelectorAll(".frase");
+            let indiceActual = 0;
+
+            function cambiarFrase() {
+                frasesElementos[indiceActual].classList.remove("active");
+                indiceActual = (indiceActual + 1) % frases.length; // Avanzar en orden
+                frasesElementos[indiceActual].classList.add("active");
+            }
+
+            setInterval(cambiarFrase, 5000); // Cambia cada 5 segundos
+        });
+        function createHeart() {
+            const heart = document.createElement("div");
+            heart.classList.add("heart");
+            heart.innerHTML = "❤️";
+
+            // Posición aleatoria en el ancho total de la pantalla sin activar el scroll horizontal
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+            heart.style.fontSize = Math.random() * 20 + 10 + "px";
+
+            document.body.appendChild(heart);
+
+            // Eliminar el corazón después de la animación
+            setTimeout(() => {
+                heart.remove();
+            }, 5000);
+        }
+
+        // Generar corazones cada 500ms
+        setInterval(createHeart, 500);
+
+        async function cargarImagenes() {
+            const storage = getStorage(app);
+            const storageRef = ref(storage, "/sanValentin/5TU3kxvIjEJ9JhRbhrUr"); // Referencia a la carpeta "anuncios" en Firebase Storage
+            const galeria = document.querySelector(".galeriIMG");
+            galeria.innerHTML = ""; // Limpiar antes de insertar nuevas imágenes
+
+            try {
+                const lista = await listAll(storageRef); // Obtener lista de imágenes en "anuncios"
+
+                lista.items.forEach(async (item) => {
+                    const url = await getDownloadURL(item); // Obtener URL de cada imagen
+
+
+                    let img = document.createElement("img");
+                    img.src = url;
+                    img.alt = "Imagen de Firebase Storage";
+
+                    galeria.appendChild(img); // Agregar la imagen a la galería
+                    img.addEventListener("mouseenter", () => {
+                        overlay.style.opacity = "1";
+                    });
+                });
+            } catch (error) {
+                console.error("Error al obtener imágenes de Storage:", error);
+            }
+        }
+
+
+        async function cargarImagenesGenrales() {
+            const storage = getStorage(app);
+            const storageRef = ref(storage, "/sanValentin/5TU3kxvIjEJ9JhRbhrUr");
+            const galeria = document.querySelector(".galeriIMG2");
+            galeria.innerHTML = ""; // Limpiar antes de insertar nuevas imágenes
+
+            try {
+                const lista = await listAll(storageRef);
+
+                lista.items.forEach(async (item) => {
+                    const url = await getDownloadURL(item);
+
+                    // Agregar imagen como fondo en el div
+                    galeria.innerHTML += `
+            <div class="centradoIMG_container">
+                <div class="img-container" style="background-image: url('${url}');">
+                    <div class="textodentro">
+                        <h1>dasdasd</h1>
+                        <p>        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Obcaecati expedita voluptates laborum odio labore unde itaque a temporibus exercitationem! Numquam mollitia ipsa voluptatum saepe, commodi rem est similique? Porro, eos?Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam nam itaque ea in dolor magnam cumque aspernatur unde? Expedita odit eos maiores cumque consectetur, fuga optio labore aut odio hic?
+</p>
+                    </div>
+                </div>
+                </div>
+            `;
+                });
+
+            } catch (error) {
+                console.error("Error al obtener imágenes de Storage:", error);
+            }
+        }
+
+
+        window.addEventListener("DOMContentLoaded", cargarImagenes);
+        window.addEventListener("DOMContentLoaded", cargarImagenesGenrales);
+
+    </script>
+
+
+</body>
+
+</html>

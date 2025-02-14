@@ -1,0 +1,503 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;700&family=Roboto:wght@400;700&display=swap');
+
+
+.fraces_principales {
+    text-align: center;
+    margin: 1rem;
+}
+
+
+.heart {
+    position: absolute;
+    bottom: 0;
+    font-size: 1px;
+    /* Tamaño del corazón */
+    color: red;
+    animation: floatUp 40s linear infinite;
+    opacity: 0.8;
+    z-index: -1;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translateY(-100vh) scale(1.5);
+        opacity: 0;
+    }
+}
+
+body {
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+    background-size: cover;
+    /* Hace que la imagen cubra toda la pantalla */
+    background-position: center;
+    /* Centra la imagen */
+    background-repeat: no-repeat;
+    /* Evita que la imagen se repita */
+    width: 100%;
+    height: 100vh;
+    /* Asegura que la imagen ocupe toda la altura de la pantalla */
+    background-color: black;
+    color: white;
+
+}
+
+.centrado_img {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.imgCentrado {
+    width: 60vw;
+    /* Usa porcentaje para hacerlo responsivo */
+    max-width: 500px;
+    /* Máximo de 500px en pantallas grandes */
+    height: 400px;
+    /* Mantiene la proporción de la imagen */
+    border-radius: 20px;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.5s ease-in-out;
+}
+
+
+.texto_ca {
+    text-align: center;
+    margin: 1rem;
+    opacity: 1;
+    font-family: "Poppins", serif;
+    font-size: 15px;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.texto_ca.fade-out {
+    opacity: 0;
+}
+
+.carousel-indicators {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    margin: 0 5px;
+    background-color: gray;
+    border-radius: 50%;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.indicator.active {
+    background-color: black;
+}
+
+.lista_frases {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    height: 10vw;
+    /* Mantiene la altura para evitar movimientos bruscos */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-height: 100px;
+    position: relative;
+    font-family: "Roboto", serif;
+    margin: 10px 10px 10px 10px;
+}
+
+.frase {
+    margin-bottom: 25px;
+    opacity: 0;
+    position: absolute;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.frase.active {
+    opacity: 1;
+}
+
+.tituloPrincipal {
+    text-align: center;
+    font-size: 2rem;
+    margin: .5em 1em;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+}
+
+.tituloSegundario {
+    margin: 3em 1em 30px 1em;
+    font-family: 'Roboto', sans-serif;
+    text-align: center;
+    font-size: 1.5rem;
+}
+
+
+.textoSegundaria {
+    font-family: sans-serif;
+    font-size: 12px;
+    margin-bottom: 2em;
+    width: 80%;
+    font-family: sans-serif;
+    font-size: .9em;
+}
+
+.textoLlamativo {
+    width: 80%;
+    font-family: sans-serif;
+    font-size: .9em;
+}
+
+.celular {
+    margin-bottom: 3em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.componentee {
+    width: 29px;
+    height: 48px;
+    border: 2px solid white;
+    border-radius: 6px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.componentee::before {
+    content: "";
+    width: 5px;
+    height: 5px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation-name: subir-bajar;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    animation-fill-mode: both;
+}
+
+@keyframes subir-bajar {
+    0% {
+        top: 15px;
+    }
+
+    100% {
+        top: 30px;
+    }
+}
+
+
+
+
+
+.centradoTextoLlamativo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.centradoTextoSegundario {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+
+}
+
+/* Contenedor de las cartas */
+#contenedor-cartas {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /* Para que las cartas se apilen */
+    height: 100vh;
+    /* Centrar en toda la pantalla */
+    width: 100%;
+    text-align: center;
+}
+
+/* Estilos de la carta */
+.carta {
+    background: #fff;
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    animation: aparecer 1s ease-in-out;
+    margin-bottom: 15px;
+    /* Espacio entre cartas */
+}
+
+/* Animación de aparición */
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos del contenido */
+.carta h1 {
+    font-family: 'Dancing Script', cursive;
+    font-size: 32px;
+    color: #d6336c;
+    margin-bottom: 10px;
+}
+
+.carta p {
+    font-size: 18px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.carta .firma {
+    margin-top: 15px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 24px;
+    color: #d6336c;
+}
+
+/* Animación de corazones flotando */
+.cora {
+    position: absolute;
+    font-size: 20px;
+    color: red;
+    opacity: 0.7;
+    animation: flotando 4s infinite ease-in-out;
+}
+
+@keyframes flotando {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+ul#listaTiendas {
+    margin-top: 2em;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.galeriIMG {
+    transition: margin-top 0.5s ease-out;
+    display: flex;
+    width: 100%;
+    height: 430px;
+
+}
+
+.galeriIMG img {
+    width: 0px;
+    flex-grow: 1;
+    object-fit: cover;
+    opacity: .2;
+    transition: .5s ease;
+}
+
+.galeriIMG img:hover {
+    cursor: crosshair;
+    width: 300px;
+    opacity: 1;
+    filter: contrast(120%);
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    /* Negro transparente */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay.visible {
+    opacity: 1;
+}
+
+
+
+.centradoIMG_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2em 0.3em;
+}
+
+.img-container {
+    background-position: center;
+    background-size: cover;
+    width: 90%;
+    height: 200px;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.6);
+    background-blend-mode: multiply;
+    border-radius: 10px;
+    transition: transform 0.5s ease, background-color 0.3s ease;
+    overflow: hidden;
+}
+
+.img-container:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* Contenedor del texto */
+.textodentro {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    padding: 10px;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+    /* Inicialmente oculto */
+}
+
+/* Título y párrafo con animaciones */
+.textodentro h1 {
+    font-size: 20px;
+    font-family: sans-serif;
+    margin: 0;
+    transform: translateY(20px);
+    transition: transform 0.5s ease-in-out;
+}
+
+.textodentro p {
+    font-size: 12px;
+    font-family: sans-serif;
+    margin: 5px 0 0;
+    transform: translateY(30px);
+    transition: transform .7s ease-in-out;
+}
+
+/* Efecto al hacer hover */
+.img-container:hover .textodentro {
+    opacity: 1;
+    transform: translateY(-20px);
+    /* Hace que suba el contenedor */
+}
+
+.img-container:hover h1 {
+    transform: translateY(0);
+}
+
+.img-container:hover p {
+    transform: translateY(0);
+}
+
+.sky {
+    position: relative;
+    width: 100%;
+    opacity: 0.7;
+    /* Reduce la opacidad del fondo */
+}
+
+/* Estilo para cada estrella */
+.star {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.6);
+    /* Color más tenue */
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    animation: twinkle 4s infinite alternate ease-in-out;
+}
+
+/* Efecto de parpadeo más tenue */
+@keyframes twinkle {
+    0% {
+        opacity: 0.3;
+        transform: scale(0.9);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.cartaSobresalida {
+    position: fixed;
+    /* Se mantiene fija al hacer scroll */
+    left: -80px;
+    /* Oculta casi todo el elemento fuera de la pantalla */
+    top: 50%;
+    /* Centra verticalmente */
+    transform: translateY(-50%);
+    width: 100px;
+    height: 60px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: left .5s ease;
+}
+
+.cartaSobresalida:hover {
+    left: 0;
+    /* Se muestra completamente cuando pasas el mouse */
+}
+
+.centradocorazon {
+    width: 100px;
+    height: 60px;
+    position: relative;
+}
+.corazon{
+    position:absolute;
+    top: 30%;
+    left: 38%;
+}
